@@ -10,7 +10,7 @@ void CreateFileDemo()
 {
    	
       try {
-	     File file = new File("D:\\Google Drive\\IITDH 5 sem\\Computer Architecture Lab\\Assignment 0\\data.csv");
+	     File file = new File("D:\\Google Drive\\IITDH 5 sem\\Computer Architecture Lab\\Assignment 0\\datan.csv");
 	     /*If file gets created then the createNewFile() 
 	      * method would return true or if the file is 
 	      * already present it would return false
@@ -34,7 +34,7 @@ void AppendFileDemo(int t, double prob, int w, int wins)
       try{
     
         //Specify the file name and path here
-    	File file =new File("D:\\Google Drive\\IITDH 5 sem\\Computer Architecture Lab\\Assignment 0\\data.csv");
+    	File file =new File("D:\\Google Drive\\IITDH 5 sem\\Computer Architecture Lab\\Assignment 0\\datan.csv");
 
     	/* This logic is to create the file if the
     	 * file is not already present
