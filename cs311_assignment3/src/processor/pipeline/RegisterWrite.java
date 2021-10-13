@@ -20,6 +20,11 @@ public class RegisterWrite {
 	
 	public void performRW()
 	{
+		boolean isNOP=MA_RW_Latch.getisNOP();
+		if(isNOP==true){
+			MA_RW_Latch.setisNOP(false);
+			return;
+		}
 		if(MA_RW_Latch.isRW_enable())
 		{
 			//TODO
@@ -43,15 +48,18 @@ public class RegisterWrite {
 			}
 			else if(op_type==all_operations[29]){//end
 				Simulator.setSimulationComplete(true);
-					return;
+				return;
 			}
 			else{
 				containingProcessor.getRegisterFile().setValue(rd_no, alu_result);
 			}
 			System.out.println(containingProcessor.getRegisterFile().getContentsAsString());
 
-			MA_RW_Latch.setRW_enable(false);
-			IF_EnableLatch.setIF_enable(true);
+			if(op_type!=all_operations[29]){
+				//set instruction as true only if the current inst is not end
+				IF_EnableLatch.setIF_enable(true);
+			}
+			
 		}
 		
 	}

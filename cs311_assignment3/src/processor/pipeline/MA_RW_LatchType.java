@@ -8,6 +8,7 @@ public class MA_RW_LatchType {
 	int ALU_Result;
 	int ld_Result;
 	Instruction instruction;
+	boolean isNOP;
 
 
 	public MA_RW_LatchType()
@@ -44,6 +45,13 @@ public class MA_RW_LatchType {
 	}
 	public int getldResult(){
 		return ld_Result;
+	}
+	
+	public void setisNOP(boolean np) {
+		this.isNOP=np;
+	}
+	public boolean getisNOP(){
+		return isNOP;
 	}
 	
 }

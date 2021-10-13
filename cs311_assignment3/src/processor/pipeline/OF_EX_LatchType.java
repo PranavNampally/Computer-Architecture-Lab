@@ -10,6 +10,7 @@ public class OF_EX_LatchType{
 	int op2=-1;
 	int imm=-1;
 	int branchTarget=-1;
+	boolean isNOP;
 
 	public OF_EX_LatchType(){
 		EX_enable = false;
@@ -49,5 +50,11 @@ public class OF_EX_LatchType{
 	}
 	public void setbranchTarget(int bt){
 		this.branchTarget=bt;
+	}
+	public void setisNOP(boolean np) {
+		this.isNOP=np;
+	}
+	public boolean getisNOP(){
+		return isNOP;
 	}
 }

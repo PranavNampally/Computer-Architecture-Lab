@@ -7,6 +7,7 @@ public class EX_MA_LatchType {
 	int ALU_Result;
 	int op2;
 	Instruction instruction;
+	boolean isNOP;
 
 	public EX_MA_LatchType()
 	{
@@ -40,6 +41,12 @@ public class EX_MA_LatchType {
 	}
 	public int getOp2(){
 		return op2;
+	}
+	public void setisNOP(boolean np) {
+		this.isNOP=np;
+	}
+	public boolean getisNOP(){
+		return isNOP;
 	}
 
 

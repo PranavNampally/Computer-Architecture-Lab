@@ -8,6 +8,7 @@ public class Execute {
 	OF_EX_LatchType OF_EX_Latch;
 	EX_MA_LatchType EX_MA_Latch;
 	EX_IF_LatchType EX_IF_Latch;
+	IF_EnableLatchType IF_EnableLatch;
 	
 	public int bin_to_sign_int(String bin) {
 		while(bin.length()<32) {
@@ -20,17 +21,26 @@ public class Execute {
 		return result;
 	}
 
-	public Execute(Processor containingProcessor, OF_EX_LatchType oF_EX_Latch, EX_MA_LatchType eX_MA_Latch, EX_IF_LatchType eX_IF_Latch)
+	public Execute(Processor containingProcessor, OF_EX_LatchType oF_EX_Latch, EX_MA_LatchType eX_MA_Latch, EX_IF_LatchType eX_IF_Latch, IF_EnableLatchType iF_EnableLatch)
 	{
 		this.containingProcessor = containingProcessor;
 		this.OF_EX_Latch = oF_EX_Latch;
 		this.EX_MA_Latch = eX_MA_Latch;
 		this.EX_IF_Latch = eX_IF_Latch;
+		this.IF_EnableLatch = iF_EnableLatch;
 	}
 	
 	public void performEX()
-	{
-		
+	{	
+		boolean isNOP=OF_EX_Latch.getisNOP();
+		if (isNOP==true) {
+			EX_MA_Latch.setisNOP(true);
+			EX_MA_Latch.setInstruction(null);
+			EX_MA_Latch.setAluResult(-1);
+			EX_MA_Latch.setOp2(-1);
+			OF_EX_Latch.setisNOP(false);
+			return;
+		}
 		//TODO
 		if(OF_EX_Latch.isEX_enable())
 		{
@@ -253,8 +263,13 @@ public class Execute {
 		EX_MA_Latch.setOp2(op2);
 		System.out.println(EX_MA_Latch.getOp2()+" "+EX_MA_Latch.getAluResult()+" "+EX_MA_Latch.getInstruction()+" "+EX_IF_Latch.getbranchTarget()+" "+EX_IF_Latch.getIsBranchTaken());
 		EX_MA_Latch.setMA_enable(true);
-		OF_EX_Latch.setEX_enable(false);
-	    }
+		
+	    if(op_type!=all_operations[29]){
+				//set instruction as true only if the current inst is not end
+				IF_EnableLatch.setIF_enable(true);
+		}
+
+
 	}
 
 

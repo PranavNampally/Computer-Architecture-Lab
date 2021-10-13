@@ -18,6 +18,15 @@ public class MemoryAccess {
 	
 	public void performMA()
 	{
+		boolean isNOP=EX_MA_Latch.getisNOP();
+		if(isNOP==true){		//if it is a bubble then clear all the values in MA_RW_Latch
+			MA_RW_Latch.setisNOP(false);
+			MA_RW_Latch.setInstruction(null);
+			MA_RW_Latch.setAluResult(-1);
+			MA_RW_Latch.setldResult(-1);
+			EX_MA_Latch.setisNOP(false);
+			return;
+		}
 		if(EX_MA_Latch.isMA_enable()){
 			//TODO
 			System.out.println("MA Stage:");
@@ -39,8 +48,9 @@ public class MemoryAccess {
 			}
 			MA_RW_Latch.setAluResult(alu_addr);
 			System.out.println(MA_RW_Latch.getAluResult()+" "+MA_RW_Latch.getldResult()+" "+MA_RW_Latch.getInstruction());
+			
 			MA_RW_Latch.setRW_enable(true);
-			EX_MA_Latch.setMA_enable(false);
+
 		}
 	}
 
