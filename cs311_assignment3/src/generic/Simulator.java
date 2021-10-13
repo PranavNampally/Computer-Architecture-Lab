@@ -85,16 +85,18 @@ public class Simulator {
 		// statistics.setNumberOfInstructions(0);	
 		while(simulationComplete == false)
 		{
-			processor.getIFUnit().performIF();
-			Clock.incrementClock();
-			processor.getOFUnit().performOF();
-			Clock.incrementClock();
-			processor.getEXUnit().performEX();
+			processor.getRWUnit().performRW();
 			Clock.incrementClock();
 			processor.getMAUnit().performMA();
 			Clock.incrementClock();
-			processor.getRWUnit().performRW();
+			processor.getEXUnit().performEX();
 			Clock.incrementClock();
+			processor.getOFUnit().performOF();
+			Clock.incrementClock();
+			processor.getIFUnit().performIF();
+			Clock.incrementClock();
+			
+			
 			Statistics.setNumberOfInstructions(Statistics.getNumberofInstructions()+1);
 			Statistics.setNumberOfCycles(Statistics.getNumberOfCycles()+1);
 		}
