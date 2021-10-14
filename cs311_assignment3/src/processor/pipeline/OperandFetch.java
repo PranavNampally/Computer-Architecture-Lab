@@ -48,13 +48,17 @@ public class OperandFetch {
 		if(inst != null && op_type != null){
 			if(op_type!=all_operations[24] || op_type!=all_operations[25] || op_type!=all_operations[26] || op_type!=all_operations[27] || op_type!=all_operations[28] || op_type!=all_operations[29]){
 				//we don't need to consider the branch instrucions and jump, as they don't have any destination operand
-					dest=inst.getDestinationOperand().getValue();
-					if(read_reg1==dest||read_reg2==dest){
-						return true;
-					}
-					else{
-						return false;
-					}
+				dest=inst.getDestinationOperand().getValue(); 
+				if((op_type==all_operations[6]||op_type==all_operations[7])&& (read_reg1==31||read_reg2==31)){
+					return true; //if the previous inst is div/divi and we want to read reg 31 then it is a hazard
+				}
+				if(read_reg1==dest||read_reg2==dest){
+					return true;
+				}
+				else{
+					return false;
+				}
+					
 			}
 			return false;
 		}
@@ -105,7 +109,7 @@ public class OperandFetch {
 
 			Operand lab=new Operand();
 			lab.setOperandType(OperandType.Label);
-			
+
 
 			String binary_rs1=new String();
 			String binary_rs2=new String();
