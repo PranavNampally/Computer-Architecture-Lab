@@ -12,7 +12,9 @@ public class OperandFetch {
 	Processor containingProcessor;
 	IF_OF_LatchType IF_OF_Latch;
 	OF_EX_LatchType OF_EX_Latch;
-	
+	EX_MA_LatchType EX_MA_Latch;
+	MA_RW_LatchType MA_RW_Latch;
+	IF_EnableLatchType IF_EnableLatch;
 	public int bin_to_sign_int(String bin) {
 		while(bin.length()<32) {
 			bin=bin.charAt(0)+bin;
@@ -23,11 +25,45 @@ public class OperandFetch {
   		//Source:https://mkyong.com/java/java-convert-negative-binary-to-integer/
 		return result;
 	}
-	public OperandFetch(Processor containingProcessor, IF_OF_LatchType iF_OF_Latch, OF_EX_LatchType oF_EX_Latch)
-	{
+	public OperandFetch(Processor containingProcessor, IF_OF_LatchType iF_OF_Latch, 
+			OF_EX_LatchType oF_EX_Latch, EX_MA_LatchType ex_MA_Latch, 
+			MA_RW_LatchType mA_rW_Latch, IF_EnableLatchType iF_EnableLatch
+	){
 		this.containingProcessor = containingProcessor;
 		this.IF_OF_Latch = iF_OF_Latch;
 		this.OF_EX_Latch = oF_EX_Latch;
+		this.EX_MA_Latch = ex_MA_Latch;
+		this.MA_RW_Latch = mA_rW_Latch;
+		this.IF_EnableLatch = iF_EnableLatch;
+	}
+
+	public static boolean checkDataHazard(Instruction inst, int read_reg1, int read_reg2) {
+		//inst=> instruction that is present in the latch
+		//dest => desitnation register of the previous instruction that is passed from the latches
+		//read_reg1 => the register that is being read in current instruction
+		//read_reg2 => the register2 that is being read in current instruction
+		OperationType op_type=inst.getOperationType();
+		OperationType[] all_operations= OperationType.values();
+		int dest=-1;
+		if(inst != null && op_type != null){
+			if(op_type!=all_operations[24] || op_type!=all_operations[25] || op_type!=all_operations[26] || op_type!=all_operations[27] || op_type!=all_operations[28] || op_type!=all_operations[29]){
+				//we don't need to consider the branch instrucions and jump, as they don't have any destination operand
+					dest=inst.getDestinationOperand().getValue();
+					if(read_reg1==dest||read_reg2==dest){
+						return true;
+					}
+					else{
+						return false;
+					}
+			}
+			return false;
+		}
+		return false;
+	}
+
+	public void bubbling() {
+		IF_EnableLatch.setIF_enable(false);
+		OF_EX_Latch.setisNOP(true);
 	}
 	
 	public void performOF()
@@ -110,6 +146,10 @@ public class OperandFetch {
 					OF_EX_Latch.setOp2(op2);
 					
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getOp2()+" "+OF_EX_Latch.getInstruction());
+					boolean isDataHazard=checkDataHazard(OF_EX_LATCH.getInstruction(), int_rs1, int_rs2) || checkDataHazard(EX_MA_LATCH.getInstruction(), int_rs1, int_rs2) || checkDataHazard(MA_RW_LATCH.getInstruction(), int_rs1, int_rs2);
+					if(isDataHazard){
+						this.bubbling();
+					}
 					break;				
 
 
@@ -143,10 +183,17 @@ public class OperandFetch {
 					imm.setValue(int_imm);
 					instruction.setSourceOperand2(imm);
 					
+
+
 					OF_EX_Latch.setInstruction(instruction);
 					OF_EX_Latch.setOp1(op1);
 					OF_EX_Latch.setImm(int_imm);
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getInstruction());
+					
+					boolean isDataHazard=checkDataHazard(OF_EX_LATCH.getInstruction(), int_rs1, int_rs1) || checkDataHazard(EX_MA_LATCH.getInstruction(), int_rs1, int_rs1) || checkDataHazard(MA_RW_LATCH.getInstruction(), int_rs1, int_rs1);
+					if(isDataHazard){
+						this.bubbling();
+					}
 					break;
 				
 				case 23:
@@ -220,6 +267,7 @@ public class OperandFetch {
 					int_imm*=1;
 					int_bt=int_imm+containingProcessor.getRegisterFile().getProgramCounter()-1;
 					// System.out.println(containingProcessor.getRegisterFile().getProgramCounter());
+					
 					OF_EX_Latch.setInstruction(instruction);
 					OF_EX_Latch.setOp1(op1);
 					OF_EX_Latch.setOp2(op2);
@@ -227,6 +275,10 @@ public class OperandFetch {
 					OF_EX_Latch.setbranchTarget(int_bt);
 
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getOp2()+" "+OF_EX_Latch.getbranchTarget()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getInstruction());
+					boolean isDataHazard=checkDataHazard(OF_EX_LATCH.getInstruction(), int_rs1, int_rs2) || checkDataHazard(EX_MA_LATCH.getInstruction(), int_rs1, int_rs2) || checkDataHazard(MA_RW_LATCH.getInstruction(), int_rs1, int_rs2);
+					if(isDataHazard){
+						this.bubbling();
+					}
 					break;
 				
 				case 29:
