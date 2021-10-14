@@ -105,6 +105,7 @@ public class OperandFetch {
 
 			Operand lab=new Operand();
 			lab.setOperandType(OperandType.Label);
+			
 
 			String binary_rs1=new String();
 			String binary_rs2=new String();
