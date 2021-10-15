@@ -8,12 +8,14 @@ public class MemoryAccess {
 	Processor containingProcessor;
 	EX_MA_LatchType EX_MA_Latch;
 	MA_RW_LatchType MA_RW_Latch;
+	IF_EnableLatchType IF_EnableLatch;
 	
-	public MemoryAccess(Processor containingProcessor, EX_MA_LatchType eX_MA_Latch, MA_RW_LatchType mA_RW_Latch)
+	public MemoryAccess(Processor containingProcessor, EX_MA_LatchType eX_MA_Latch, MA_RW_LatchType mA_RW_Latch, IF_EnableLatchType iF_EnableLatch)
 	{
 		this.containingProcessor = containingProcessor;
 		this.EX_MA_Latch = eX_MA_Latch;
 		this.MA_RW_Latch = mA_RW_Latch;
+		this.IF_EnableLatch = iF_EnableLatch;
 	}
 	
 	public void performMA()
@@ -32,6 +34,9 @@ public class MemoryAccess {
 			System.out.println("MA Stage:");
 			Instruction inst=EX_MA_Latch.instruction;
 			MA_RW_Latch.setInstruction(inst);
+			if(inst==null){
+				return;
+			}
 			OperationType op_type=inst.getOperationType();
 			OperationType[] all_operations= OperationType.values();
 
@@ -49,9 +54,14 @@ public class MemoryAccess {
 			MA_RW_Latch.setAluResult(alu_addr);
 			System.out.println(MA_RW_Latch.getAluResult()+" "+MA_RW_Latch.getldResult()+" "+MA_RW_Latch.getInstruction());
 			
+			
+			if(op_type!=all_operations[29]){
+				//set instruction as true only if the current inst is not end
+				IF_EnableLatch.setIF_enable(true);
+			}
 			MA_RW_Latch.setRW_enable(true);
-
 		}
+		
 	}
 
 }

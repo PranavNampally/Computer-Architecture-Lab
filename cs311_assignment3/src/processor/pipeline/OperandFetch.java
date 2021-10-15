@@ -42,17 +42,47 @@ public class OperandFetch {
 		//dest => desitnation register of the previous instruction that is passed from the latches
 		//read_reg1 => the register that is being read in current instruction
 		//read_reg2 => the register2 that is being read in current instruction
-		OperationType op_type=inst.getOperationType();
+
 		OperationType[] all_operations= OperationType.values();
 		int dest=-1;
-		if(inst != null && op_type != null){
+		if(inst != null){
+			OperationType op_type=inst.getOperationType();
 			if(op_type!=all_operations[24] || op_type!=all_operations[25] || op_type!=all_operations[26] || op_type!=all_operations[27] || op_type!=all_operations[28] || op_type!=all_operations[29]){
 				//we don't need to consider the branch instrucions and jump, as they don't have any destination operand
 				dest=inst.getDestinationOperand().getValue(); 
-				if((op_type==all_operations[6]||op_type==all_operations[7])&& (read_reg1==31||read_reg2==31)){
+				if((read_reg1==31||read_reg2==31)){
 					return true; //if the previous inst is div/divi and we want to read reg 31 then it is a hazard
 				}
 				if(read_reg1==dest||read_reg2==dest){
+					return true;
+				}
+				else{
+					return false;
+				}
+					
+			}
+			return false;
+		}
+		return false;
+	}
+	
+	public static boolean checkDataHazardWithImmediate(Instruction inst, int read_reg1) {
+		//inst=> instruction that is present in the latch
+		//dest => desitnation register of the previous instruction that is passed from the latches
+		//read_reg1 => the register that is being read in current instruction
+		//read_reg2 => the register2 that is being read in current instruction
+
+		OperationType[] all_operations= OperationType.values();
+		int dest=-1;
+		if(inst != null){
+			OperationType op_type=inst.getOperationType();
+			if(op_type!=all_operations[24] || op_type!=all_operations[25] || op_type!=all_operations[26] || op_type!=all_operations[27] || op_type!=all_operations[28] || op_type!=all_operations[29]){
+				//we don't need to consider the branch instrucions and jump, as they don't have any destination operand
+				dest=inst.getDestinationOperand().getValue(); 
+				if((read_reg1==31)){
+					return true; //if the previous inst is div/divi and we want to read reg 31 then it is a hazard
+				}
+				if(read_reg1==dest){
 					return true;
 				}
 				else{
@@ -110,7 +140,7 @@ public class OperandFetch {
 			Operand lab=new Operand();
 			lab.setOperandType(OperandType.Label);
 
-
+			boolean isDataHazard=false;
 			String binary_rs1=new String();
 			String binary_rs2=new String();
 			String binary_rd=new String();
@@ -151,9 +181,10 @@ public class OperandFetch {
 					OF_EX_Latch.setOp2(op2);
 					
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getOp2()+" "+OF_EX_Latch.getInstruction());
-					boolean isDataHazard=checkDataHazard(OF_EX_LATCH.getInstruction(), int_rs1, int_rs2) || checkDataHazard(EX_MA_LATCH.getInstruction(), int_rs1, int_rs2) || checkDataHazard(MA_RW_LATCH.getInstruction(), int_rs1, int_rs2);
+					isDataHazard=checkDataHazard(OF_EX_Latch.getInstruction(), int_rs1, int_rs2) || checkDataHazard(EX_MA_Latch.getInstruction(), int_rs1, int_rs2) || checkDataHazard(MA_RW_Latch.getInstruction(), int_rs1, int_rs2);
 					if(isDataHazard){
 						this.bubbling();
+						break;
 					}
 					break;				
 
@@ -195,11 +226,13 @@ public class OperandFetch {
 					OF_EX_Latch.setImm(int_imm);
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getInstruction());
 					
-					boolean isDataHazard=checkDataHazard(OF_EX_LATCH.getInstruction(), int_rs1, int_rs1) || checkDataHazard(EX_MA_LATCH.getInstruction(), int_rs1, int_rs1) || checkDataHazard(MA_RW_LATCH.getInstruction(), int_rs1, int_rs1);
+					isDataHazard=checkDataHazardWithImmediate(OF_EX_Latch.getInstruction(), int_rs1) || checkDataHazardWithImmediate(EX_MA_Latch.getInstruction(), int_rs1) || checkDataHazardWithImmediate(MA_RW_Latch.getInstruction(), int_rs1);
 					if(isDataHazard){
 						this.bubbling();
+						break;
 					}
 					break;
+					
 				
 				case 23:
 				//st
@@ -225,6 +258,11 @@ public class OperandFetch {
 					OF_EX_Latch.setOp2(op2);
 					OF_EX_Latch.setImm(int_imm);
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getInstruction());
+					isDataHazard=checkDataHazard(OF_EX_Latch.getInstruction(), int_rs1, int_rd) || checkDataHazard(EX_MA_Latch.getInstruction(), int_rs1, int_rd) || checkDataHazard(MA_RW_Latch.getInstruction(), int_rs1, int_rd);
+					if(isDataHazard){
+						this.bubbling();
+						break;
+					}
 					break;
 
 				case 24:
@@ -280,21 +318,21 @@ public class OperandFetch {
 					OF_EX_Latch.setbranchTarget(int_bt);
 
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getOp2()+" "+OF_EX_Latch.getbranchTarget()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getInstruction());
-					boolean isDataHazard=checkDataHazard(OF_EX_LATCH.getInstruction(), int_rs1, int_rs2) || checkDataHazard(EX_MA_LATCH.getInstruction(), int_rs1, int_rs2) || checkDataHazard(MA_RW_LATCH.getInstruction(), int_rs1, int_rs2);
+					isDataHazard=checkDataHazard(OF_EX_Latch.getInstruction(), int_rs1, int_rs2) || checkDataHazard(EX_MA_Latch.getInstruction(), int_rs1, int_rs2) || checkDataHazard(MA_RW_Latch.getInstruction(), int_rs1, int_rs2);
 					if(isDataHazard){
 						this.bubbling();
+						break;
 					}
 					break;
 				
 				case 29:
-					Simulator.setSimulationComplete(true);
-					return;
+					IF_EnableLatch.setIF_enable(false);
+					break;
 
 				default:
 					break;
 			}
 			System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getOp2()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getbranchTarget()+" "+OF_EX_Latch.getInstruction());
-			IF_OF_Latch.setOF_enable(false);
 			OF_EX_Latch.setEX_enable(true);
 		}
 	}

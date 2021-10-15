@@ -32,6 +32,9 @@ public class RegisterWrite {
 			// if instruction being processed is an end instruction, remember to call Simulator.setSimulationComplete(true);
 			Instruction inst=MA_RW_Latch.instruction;
 			MA_RW_Latch.setInstruction(inst);
+			if(inst==null){
+				return;
+			}
 			OperationType op_type=inst.getOperationType();
 
 			OperationType[] all_operations= OperationType.values();

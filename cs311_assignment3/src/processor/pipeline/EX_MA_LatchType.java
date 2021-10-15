@@ -11,7 +11,8 @@ public class EX_MA_LatchType {
 
 	public EX_MA_LatchType()
 	{
-		MA_enable = false;
+		this.MA_enable = false;
+		this.isNOP = false;
 	}
 
 	public boolean isMA_enable() {
@@ -19,7 +20,7 @@ public class EX_MA_LatchType {
 	}
 
 	public void setMA_enable(boolean mA_enable) {
-		MA_enable = mA_enable;
+		this.MA_enable = mA_enable;
 	}
 
 	public void setInstruction(Instruction inst) {
