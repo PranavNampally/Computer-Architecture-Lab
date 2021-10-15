@@ -109,6 +109,9 @@ public class OperandFetch {
 			//TODO
 			int signed_inst=IF_OF_Latch.getInstruction();
 			String binary_inst=Integer.toBinaryString(signed_inst);
+			if(signed_inst==0){
+				return;
+			}
 			if(signed_inst>=0) {
 				binary_inst='0'+binary_inst;
 			}

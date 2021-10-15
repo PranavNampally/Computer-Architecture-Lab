@@ -7,7 +7,7 @@ public class IF_OF_LatchType {
 	
 	public IF_OF_LatchType()
 	{
-		this.OF_enable = false;
+		this.OF_enable = true;
 	}
 
 	public boolean isOF_enable() {

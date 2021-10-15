@@ -11,7 +11,7 @@ public class EX_MA_LatchType {
 
 	public EX_MA_LatchType()
 	{
-		this.MA_enable = false;
+		this.MA_enable = true;
 		this.isNOP = false;
 	}
 

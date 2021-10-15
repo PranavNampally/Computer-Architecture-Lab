@@ -13,7 +13,7 @@ public class OF_EX_LatchType{
 	boolean isNOP;
 
 	public OF_EX_LatchType(){
-		this.EX_enable = false;
+		this.EX_enable = true;
 		this.isNOP=false;
 	}
 	public boolean isEX_enable() {

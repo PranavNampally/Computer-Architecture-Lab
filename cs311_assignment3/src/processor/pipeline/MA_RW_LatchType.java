@@ -13,7 +13,7 @@ public class MA_RW_LatchType {
 
 	public MA_RW_LatchType()
 	{
-		this.RW_enable = false;
+		this.RW_enable = true;
 		this.isNOP =false;
 	}
 
