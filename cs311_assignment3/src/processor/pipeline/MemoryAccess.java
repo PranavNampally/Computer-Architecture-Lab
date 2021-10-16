@@ -57,11 +57,11 @@ public class MemoryAccess {
 			}
 			MA_RW_Latch.setAluResult(alu_addr);
 			System.out.println(MA_RW_Latch.getAluResult()+" "+MA_RW_Latch.getldResult()+" "+MA_RW_Latch.getInstruction());
-			
-			
-			if(op_type!=all_operations[29]){
+
+			IF_EnableLatch.setIF_enable(true);
+			if(op_type==all_operations[29]){
 				//set instruction as true only if the current inst is not end
-				IF_EnableLatch.setIF_enable(true);
+				IF_EnableLatch.setIF_enable(false);
 			}
 			MA_RW_Latch.setRW_enable(true);
 			//clearing EX_MA_latch

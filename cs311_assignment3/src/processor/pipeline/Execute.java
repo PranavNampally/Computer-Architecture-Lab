@@ -281,11 +281,12 @@ public class Execute {
 		op2=OF_EX_Latch.getOp2();
 		EX_MA_Latch.setOp2(op2);
 		System.out.println(EX_MA_Latch.getOp2()+" "+EX_MA_Latch.getAluResult()+" "+EX_MA_Latch.getInstruction()+" "+EX_IF_Latch.getbranchTarget()+" "+EX_IF_Latch.getIsBranchTaken());
-		
-		
-	    if(op_type!=all_operations[29]){
-				//set instruction as true only if the current inst is not end
-				IF_EnableLatch.setIF_enable(true);
+
+
+		IF_EnableLatch.setIF_enable(true);
+		if(op_type==all_operations[29]){
+			//set instruction as true only if the current inst is not end
+			IF_EnableLatch.setIF_enable(false);
 		}
 		EX_MA_Latch.setMA_enable(true);
 		//clearing the OF_EX_LATCH
@@ -294,6 +295,8 @@ public class Execute {
 	}else{
 		System.out.println("EX Disabled");
 	}
+
+		//of enable aapali OF_EX_latch.setisnop true pettali
 
 
 }}

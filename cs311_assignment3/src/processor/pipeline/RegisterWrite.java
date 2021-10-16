@@ -43,11 +43,12 @@ public class RegisterWrite {
 
 			OperationType[] all_operations= OperationType.values();
 
-			int rd_no=inst.getDestinationOperand().getValue();
+
 			int alu_result=MA_RW_Latch.getAluResult();
 			int ld_Result=MA_RW_Latch.getldResult();
 
 			if(op_type==all_operations[22]){//ld
+				int rd_no=inst.getDestinationOperand().getValue();
 				containingProcessor.getRegisterFile().setValue(rd_no, ld_Result);
 			}
 			else if(op_type==all_operations[23]||op_type==all_operations[24]||op_type==all_operations[25]||op_type==all_operations[26]||op_type==all_operations[27] ||op_type==all_operations[28]){
@@ -57,6 +58,7 @@ public class RegisterWrite {
 				Simulator.setSimulationComplete(true);
 			}
 			else{
+				int rd_no=inst.getDestinationOperand().getValue();
 				containingProcessor.getRegisterFile().setValue(rd_no, alu_result);
 			}
 			System.out.println(containingProcessor.getRegisterFile().getContentsAsString());

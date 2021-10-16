@@ -362,7 +362,7 @@ public class OperandFetch {
 					break;
 				
 				case 29:
-					Simulator.setSimulationComplete(true);
+					OF_EX_Latch.setInstruction(instruction);
 					IF_EnableLatch.setIF_enable(false);
 
 					break;
