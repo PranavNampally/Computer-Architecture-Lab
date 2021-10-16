@@ -1,12 +1,12 @@
 package processor.pipeline;
 
+import generic.Simulator;
 import processor.Processor;
 import generic.Instruction;
 import generic.Instruction.OperationType;
 import generic.Operand;
 import generic.Operand.OperandType;
 
-import generic.Simulator;
 
 public class OperandFetch {
 	Processor containingProcessor;
@@ -76,7 +76,7 @@ public class OperandFetch {
 		int dest=-1;
 		if(inst != null){
 			OperationType op_type=inst.getOperationType();
-			if(op_type!=all_operations[24] || op_type!=all_operations[25] || op_type!=all_operations[26] || op_type!=all_operations[27] || op_type!=all_operations[28] || op_type!=all_operations[29]){
+			if(op_type!=all_operations[24] && op_type!=all_operations[25] && op_type!=all_operations[26] && op_type!=all_operations[27] && op_type!=all_operations[28] && op_type!=all_operations[29]){
 				//we don't need to consider the branch instrucions and jump, as they don't have any destination operand
 				dest=inst.getDestinationOperand().getValue(); 
 				if((read_reg1==31)){
@@ -97,21 +97,27 @@ public class OperandFetch {
 
 	public void bubbling() {
 		IF_EnableLatch.setIF_enable(false);
+
 		OF_EX_Latch.setisNOP(true);
 	}
 	
 	public void performOF()
 	{
+		System.out.println("OF Stage:");
 		if(IF_OF_Latch.isOF_enable())
 		{
-			System.out.println("OF Stage:");
-			
+			System.out.println("OF Enabled");
 			//TODO
 			int signed_inst=IF_OF_Latch.getInstruction();
-			String binary_inst=Integer.toBinaryString(signed_inst);
-			if(signed_inst==0){
+			if(signed_inst==-1){
+				
 				return;
 			}
+			String binary_inst=Integer.toBinaryString(signed_inst);
+			// if(signed_inst<0){
+			// 	return;
+
+			// }
 			if(signed_inst>=0) {
 				binary_inst='0'+binary_inst;
 			}
@@ -143,12 +149,21 @@ public class OperandFetch {
 			Operand lab=new Operand();
 			lab.setOperandType(OperandType.Label);
 
+			if(operationType == all_operations[24] || operationType == all_operations[25] ||operationType == all_operations[26]||operationType == all_operations[27]|| operationType == all_operations[28]){
+				IF_EnableLatch.setIF_enable(false);
+			}
+
 			boolean isDataHazard=false;
+			//fetch previous instructions
+			Instruction of_exInstruction=OF_EX_Latch.getInstruction();
+			Instruction ex_maInstruction=EX_MA_Latch.getInstruction();
+			Instruction ma_rwInstruction=MA_RW_Latch.getInstruction();
 			String binary_rs1=new String();
 			String binary_rs2=new String();
 			String binary_rd=new String();
 			String binary_imm=new String();
-			int op1, op2, int_rd, int_rs1, int_rs2, int_imm, int_bt;
+
+			int op1=0, op2=0, int_rd=0, int_rs1=0, int_rs2=0, int_imm=0, int_bt=0;
 			switch(int_opcode){
 				case 0:
 				case 2:
@@ -179,13 +194,21 @@ public class OperandFetch {
 					rd.setValue(int_rd);
 					instruction.setDestinationOperand(rd);
 					
-					OF_EX_Latch.setInstruction(instruction);
-					OF_EX_Latch.setOp1(op1);
-					OF_EX_Latch.setOp2(op2);
+					
 					
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getOp2()+" "+OF_EX_Latch.getInstruction());
-					isDataHazard=checkDataHazard(OF_EX_Latch.getInstruction(), int_rs1, int_rs2) || checkDataHazard(EX_MA_Latch.getInstruction(), int_rs1, int_rs2) || checkDataHazard(MA_RW_Latch.getInstruction(), int_rs1, int_rs2);
+					isDataHazard=checkDataHazard(of_exInstruction, int_rs1, int_rs2) || checkDataHazard(ex_maInstruction, int_rs1, int_rs2) || checkDataHazard(ma_rwInstruction, int_rs1, int_rs2);
 					if(isDataHazard){
+						// System.out.println("Bubble FOund clash in");
+						if(checkDataHazard(of_exInstruction, int_rs1, int_rs2)){
+							System.out.println("Bubble FOund clash in OF_EX");
+						}
+						if(checkDataHazard(ex_maInstruction, int_rs1, int_rs2)){
+								System.out.println("Bubble FOund clash in EX_MA");
+						}
+						if(checkDataHazard(ma_rwInstruction, int_rs1, int_rs2)){
+								System.out.println("Bubble FOund clash in MA_RW");
+						}
 						this.bubbling();
 						break;
 					}
@@ -228,9 +251,19 @@ public class OperandFetch {
 					OF_EX_Latch.setOp1(op1);
 					OF_EX_Latch.setImm(int_imm);
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getInstruction());
-					
-					isDataHazard=checkDataHazardWithImmediate(OF_EX_Latch.getInstruction(), int_rs1) || checkDataHazardWithImmediate(EX_MA_Latch.getInstruction(), int_rs1) || checkDataHazardWithImmediate(MA_RW_Latch.getInstruction(), int_rs1);
+
+					isDataHazard=checkDataHazardWithImmediate(of_exInstruction, int_rs1) || checkDataHazardWithImmediate(ex_maInstruction, int_rs1) || checkDataHazardWithImmediate(ma_rwInstruction, int_rs1);
 					if(isDataHazard){
+						// System.out.println("Bubble FOund clash in");
+						if(checkDataHazardWithImmediate(of_exInstruction, int_rs1)){
+							System.out.println("Bubble FOund clash in OF_EX");
+						}
+						if(checkDataHazardWithImmediate(ex_maInstruction, int_rs1)){
+								System.out.println("Bubble FOund clash in EX_MA");
+						}
+						if(checkDataHazardWithImmediate(ma_rwInstruction, int_rs1)){
+								System.out.println("Bubble FOund clash in MA_RW");
+						}
 						this.bubbling();
 						break;
 					}
@@ -261,8 +294,9 @@ public class OperandFetch {
 					OF_EX_Latch.setOp2(op2);
 					OF_EX_Latch.setImm(int_imm);
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getInstruction());
-					isDataHazard=checkDataHazard(OF_EX_Latch.getInstruction(), int_rs1, int_rd) || checkDataHazard(EX_MA_Latch.getInstruction(), int_rs1, int_rd) || checkDataHazard(MA_RW_Latch.getInstruction(), int_rs1, int_rd);
+					isDataHazard=checkDataHazard(of_exInstruction, int_rs1, int_rd) || checkDataHazard(ex_maInstruction, int_rs1, int_rd) || checkDataHazard(ma_rwInstruction, int_rs1, int_rd);
 					if(isDataHazard){
+						
 						this.bubbling();
 						break;
 					}
@@ -313,7 +347,6 @@ public class OperandFetch {
 					int_imm*=1;
 					int_bt=int_imm+containingProcessor.getRegisterFile().getProgramCounter()-1;
 					// System.out.println(containingProcessor.getRegisterFile().getProgramCounter());
-					
 					OF_EX_Latch.setInstruction(instruction);
 					OF_EX_Latch.setOp1(op1);
 					OF_EX_Latch.setOp2(op2);
@@ -321,7 +354,7 @@ public class OperandFetch {
 					OF_EX_Latch.setbranchTarget(int_bt);
 
 //					System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getOp2()+" "+OF_EX_Latch.getbranchTarget()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getInstruction());
-					isDataHazard=checkDataHazard(OF_EX_Latch.getInstruction(), int_rs1, int_rs2) || checkDataHazard(EX_MA_Latch.getInstruction(), int_rs1, int_rs2) || checkDataHazard(MA_RW_Latch.getInstruction(), int_rs1, int_rs2);
+					isDataHazard=checkDataHazard(of_exInstruction, int_rs1, int_rs2) || checkDataHazard(ex_maInstruction, int_rs1, int_rs2) || checkDataHazard(ma_rwInstruction, int_rs1, int_rs2);
 					if(isDataHazard){
 						this.bubbling();
 						break;
@@ -329,14 +362,25 @@ public class OperandFetch {
 					break;
 				
 				case 29:
+					Simulator.setSimulationComplete(true);
 					IF_EnableLatch.setIF_enable(false);
+
 					break;
 
 				default:
 					break;
 			}
+			
 			System.out.println(OF_EX_Latch.getOp1()+" "+OF_EX_Latch.getOp2()+" "+OF_EX_Latch.getImm()+" "+OF_EX_Latch.getbranchTarget()+" "+OF_EX_Latch.getInstruction());
 			OF_EX_Latch.setEX_enable(true);
+
+
+			//clearing the IF_OF_Latch
+			// IF_OF_Latch.setInstruction(-1);
+
+
+		}else{
+			System.out.println("OF Disabled");
 		}
 	}
 

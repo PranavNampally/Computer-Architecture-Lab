@@ -33,22 +33,31 @@ public class Execute {
 	}
 	
 	public void performEX()
-	{	
-		boolean isNOP=OF_EX_Latch.getisNOP();
-		if (isNOP==true) {
-			EX_MA_Latch.setisNOP(true);
-			EX_MA_Latch.setInstruction(null);
-			EX_MA_Latch.setAluResult(-1);
-			EX_MA_Latch.setOp2(-1);
-			OF_EX_Latch.setisNOP(false);
-			return;
-		}
+	{
+		System.out.println("EX Stage:");
+		
 		//TODO
+
 		if(OF_EX_Latch.isEX_enable())
 		{
-		System.out.println("EX Stage:");
+			boolean isNOP=OF_EX_Latch.getisNOP();
+			if (isNOP==true) {
+				System.out.println("NOP instruction");
+				EX_MA_Latch.setisNOP(true);
+				OF_EX_Latch.setInstruction(null);
+				EX_MA_Latch.setInstruction(null);
+				EX_MA_Latch.setAluResult(-1);
+				EX_MA_Latch.setOp2(-1);
+				OF_EX_Latch.setisNOP(false);
+				return;
+			}
+			System.out.println("EX Enabled");
+//		System.out.println("EX Stage:");
 		Instruction inst=OF_EX_Latch.instruction;
+		OF_EX_Latch.setInstruction(null);
 		EX_MA_Latch.setInstruction(inst);
+//		System.out.println(OF_EX_Latch.getInstruction()+ EX_MA_Latch.getInstruction());
+
 		if(inst==null){
 			return;
 		}
@@ -59,6 +68,11 @@ public class Execute {
 		int imm=0;
 		long aluResult=0;
 		boolean isBranchTaken=false;
+		if(op_type == all_operations[24] || op_type == all_operations[25] ||op_type == all_operations[26]||op_type == all_operations[27]|| op_type == all_operations[28] || op_type==all_operations[29]){
+			IF_EnableLatch.setIF_enable(false);
+			IF_OF_Latch.setOF_enable(false);
+			OF_EX_Latch.setEX_enable(false);
+		}
 		if(op_type==all_operations[0] ){//add
 			op1=OF_EX_Latch.getOp1();
 			op2=OF_EX_Latch.getOp2();
@@ -274,7 +288,11 @@ public class Execute {
 				IF_EnableLatch.setIF_enable(true);
 		}
 		EX_MA_Latch.setMA_enable(true);
-
+		//clearing the OF_EX_LATCH
+		// OF_EX_Latch.setInstruction(null);
+//		System.out.println(OF_EX_Latch.getInstruction().getDestinationOperand().getValue());
+	}else{
+		System.out.println("EX Disabled");
 	}
 
 

@@ -3,7 +3,7 @@ package processor.pipeline;
 public class IF_OF_LatchType {
 	
 	boolean OF_enable;
-	int instruction;
+	int instruction=-1;
 	
 	public IF_OF_LatchType()
 	{

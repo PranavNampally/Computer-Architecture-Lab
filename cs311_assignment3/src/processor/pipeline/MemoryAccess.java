@@ -20,18 +20,22 @@ public class MemoryAccess {
 	
 	public void performMA()
 	{
-		boolean isNOP=EX_MA_Latch.getisNOP();
-		if(isNOP==true){		//if it is a bubble then clear all the values in MA_RW_Latch
-			MA_RW_Latch.setisNOP(false);
-			MA_RW_Latch.setInstruction(null);
-			MA_RW_Latch.setAluResult(-1);
-			MA_RW_Latch.setldResult(-1);
-			EX_MA_Latch.setisNOP(false);
-			return;
-		}
+		System.out.println("MA Stage:");
 		if(EX_MA_Latch.isMA_enable()){
+			System.out.println("MA Enabled");
+			boolean isNOP=EX_MA_Latch.getisNOP();
+			if(isNOP==true){		//if it is a bubble then clear all the values in MA_RW_Latch
+				System.out.println("NOP instruction");
+				MA_RW_Latch.setisNOP(false);
+				MA_RW_Latch.setInstruction(null);
+				MA_RW_Latch.setAluResult(-1);
+				MA_RW_Latch.setldResult(-1);
+				EX_MA_Latch.setisNOP(false);
+				return;
+			}
+
 			//TODO
-			System.out.println("MA Stage:");
+			
 			Instruction inst=EX_MA_Latch.instruction;
 			MA_RW_Latch.setInstruction(inst);
 			if(inst==null){
@@ -60,6 +64,10 @@ public class MemoryAccess {
 				IF_EnableLatch.setIF_enable(true);
 			}
 			MA_RW_Latch.setRW_enable(true);
+			//clearing EX_MA_latch
+			EX_MA_Latch.setInstruction(null);
+		}else{
+			System.out.println("MA Disabled");
 		}
 		
 	}
