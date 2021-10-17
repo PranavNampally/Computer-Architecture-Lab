@@ -7,12 +7,11 @@ public class EX_MA_LatchType {
 	int ALU_Result;
 	int op2;
 	Instruction instruction;
-	boolean isNOP;
-
+	boolean isNOP=false;
+	
 	public EX_MA_LatchType()
 	{
-		this.MA_enable = true;
-		this.isNOP = false;
+		MA_enable = false;
 	}
 
 	public boolean isMA_enable() {
@@ -20,7 +19,7 @@ public class EX_MA_LatchType {
 	}
 
 	public void setMA_enable(boolean mA_enable) {
-		this.MA_enable = mA_enable;
+		MA_enable = mA_enable;
 	}
 
 	public void setInstruction(Instruction inst) {
@@ -43,12 +42,13 @@ public class EX_MA_LatchType {
 	public int getOp2(){
 		return op2;
 	}
+	
 	public void setisNOP(boolean np) {
-		this.isNOP=np;
-	}
-	public boolean getisNOP(){
-		return isNOP;
-	}
+	      this.isNOP=np;
+	 }
+	 public boolean getisNOP(){
+	    return isNOP;
+	 }
 
 
 

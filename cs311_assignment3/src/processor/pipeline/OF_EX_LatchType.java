@@ -10,17 +10,15 @@ public class OF_EX_LatchType{
 	int op2=-1;
 	int imm=-1;
 	int branchTarget=-1;
-	boolean isNOP;
-
+	boolean isNOP=false;
 	public OF_EX_LatchType(){
-		this.EX_enable = true;
-		this.isNOP=false;
+		EX_enable = false;
 	}
 	public boolean isEX_enable() {
 		return EX_enable;
 	}
 	public void setEX_enable(boolean eX_enable) {
-		this.EX_enable = eX_enable;
+		EX_enable = eX_enable;
 	}
 	public void setInstruction(Instruction inst){
 		this.instruction=inst;
@@ -53,9 +51,9 @@ public class OF_EX_LatchType{
 		this.branchTarget=bt;
 	}
 	public void setisNOP(boolean np) {
-		this.isNOP=np;
-	}
-	public boolean getisNOP(){
-		return isNOP;
-	}
+	      this.isNOP=np;
+   }
+   public boolean getisNOP(){
+      return isNOP;
+   }
 }

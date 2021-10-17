@@ -9,36 +9,31 @@ public class MemoryAccess {
 	EX_MA_LatchType EX_MA_Latch;
 	MA_RW_LatchType MA_RW_Latch;
 	IF_EnableLatchType IF_EnableLatch;
-	
-	public MemoryAccess(Processor containingProcessor, EX_MA_LatchType eX_MA_Latch, MA_RW_LatchType mA_RW_Latch, IF_EnableLatchType iF_EnableLatch)
+	OF_EX_LatchType OF_EX_Latch;
+	public MemoryAccess(Processor containingProcessor, EX_MA_LatchType eX_MA_Latch, MA_RW_LatchType mA_RW_Latch, IF_EnableLatchType if_Enable_latch, OF_EX_LatchType oF_eX_Latch)
 	{
 		this.containingProcessor = containingProcessor;
 		this.EX_MA_Latch = eX_MA_Latch;
 		this.MA_RW_Latch = mA_RW_Latch;
-		this.IF_EnableLatch = iF_EnableLatch;
+		this.IF_EnableLatch =if_Enable_latch;
+		this.OF_EX_Latch=oF_eX_Latch;
 	}
 	
 	public void performMA()
 	{
-		System.out.println("MA Stage:");
 		if(EX_MA_Latch.isMA_enable()){
-			System.out.println("MA Enabled");
-			boolean isNOP=EX_MA_Latch.getisNOP();
-			if(isNOP==true){		//if it is a bubble then clear all the values in MA_RW_Latch
-				System.out.println("NOP instruction");
-				MA_RW_Latch.setisNOP(false);
-				MA_RW_Latch.setInstruction(null);
-				MA_RW_Latch.setAluResult(-1);
-				MA_RW_Latch.setldResult(-1);
+			//TODO
+			System.out.println("MA Stage:");
+			if(EX_MA_Latch.getisNOP()==true) {
 				EX_MA_Latch.setisNOP(false);
+				MA_RW_Latch.setisNOP(true);
+				EX_MA_Latch.setInstruction(null);
 				return;
 			}
-
-			//TODO
-			
 			Instruction inst=EX_MA_Latch.instruction;
+			EX_MA_Latch.setInstruction(null);
 			MA_RW_Latch.setInstruction(inst);
-			if(inst==null){
+			if(inst==null) {
 				return;
 			}
 			OperationType op_type=inst.getOperationType();
@@ -57,19 +52,13 @@ public class MemoryAccess {
 			}
 			MA_RW_Latch.setAluResult(alu_addr);
 			System.out.println(MA_RW_Latch.getAluResult()+" "+MA_RW_Latch.getldResult()+" "+MA_RW_Latch.getInstruction());
-
+			MA_RW_Latch.setRW_enable(true);
 			IF_EnableLatch.setIF_enable(true);
-			if(op_type==all_operations[29]){
-				//set instruction as true only if the current inst is not end
+			if(op_type==all_operations[29]) {
+				OF_EX_Latch.setEX_enable(false);
 				IF_EnableLatch.setIF_enable(false);
 			}
-			MA_RW_Latch.setRW_enable(true);
-			//clearing EX_MA_latch
-			EX_MA_Latch.setInstruction(null);
-		}else{
-			System.out.println("MA Disabled");
 		}
-		
 	}
 
 }

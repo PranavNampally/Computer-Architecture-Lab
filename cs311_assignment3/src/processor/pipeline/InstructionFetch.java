@@ -22,8 +22,7 @@ public class InstructionFetch {
 		System.out.println("IF Stage:");
 		
 		if(IF_EnableLatch.isIF_enable())
-		{
-
+		{	
 			int newInstruction =-1;
 			if(EX_IF_Latch.getIsBranchTaken()){
 				containingProcessor.getRegisterFile().setProgramCounter(EX_IF_Latch.getbranchTarget());
@@ -46,10 +45,9 @@ public class InstructionFetch {
 			// System.out.println(currentPC+" "+newInstruction);
 //			System.out.println(containingProcessor.getMainMemory().getContentsAsString(0, 100));
 			IF_OF_Latch.setInstruction(newInstruction);
+			
 			IF_OF_Latch.setOF_enable(true);
 		}
-		else {System.out.println("IF Disabled");}
-
 	}
 
 }

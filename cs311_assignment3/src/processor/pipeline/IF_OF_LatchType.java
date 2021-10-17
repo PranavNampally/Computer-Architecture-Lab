@@ -7,7 +7,7 @@ public class IF_OF_LatchType {
 	
 	public IF_OF_LatchType()
 	{
-		this.OF_enable = true;
+		OF_enable = false;
 	}
 
 	public boolean isOF_enable() {
@@ -15,7 +15,7 @@ public class IF_OF_LatchType {
 	}
 
 	public void setOF_enable(boolean oF_enable) {
-		this.OF_enable = oF_enable;
+		OF_enable = oF_enable;
 	}
 
 	public int getInstruction() {

@@ -8,13 +8,11 @@ public class MA_RW_LatchType {
 	int ALU_Result;
 	int ld_Result;
 	Instruction instruction;
-	boolean isNOP;
-
-
+	boolean isNOP=false;
+	
 	public MA_RW_LatchType()
 	{
-		this.RW_enable = true;
-		this.isNOP =false;
+		RW_enable = false;
 	}
 
 	public boolean isRW_enable() {
@@ -22,7 +20,7 @@ public class MA_RW_LatchType {
 	}
 
 	public void setRW_enable(boolean rW_enable) {
-		this.RW_enable = rW_enable;
+		RW_enable = rW_enable;
 	}
 
 	
@@ -47,12 +45,11 @@ public class MA_RW_LatchType {
 	public int getldResult(){
 		return ld_Result;
 	}
-	
 	public void setisNOP(boolean np) {
-		this.isNOP=np;
-	}
-	public boolean getisNOP(){
-		return isNOP;
-	}
+	      this.isNOP=np;
+	 }
+	 public boolean getisNOP(){
+	    return isNOP;
+	 }
 	
 }

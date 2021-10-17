@@ -6,7 +6,7 @@ public class IF_EnableLatchType {
 	
 	public IF_EnableLatchType()
 	{
-		this.IF_enable = true;
+		IF_enable = true;
 	}
 
 	public boolean isIF_enable() {
@@ -14,7 +14,7 @@ public class IF_EnableLatchType {
 	}
 
 	public void setIF_enable(boolean iF_enable) {
-		this.IF_enable = iF_enable;
+		IF_enable = iF_enable;
 	}
 
 }

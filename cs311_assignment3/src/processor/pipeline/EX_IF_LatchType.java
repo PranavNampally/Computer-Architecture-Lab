@@ -6,7 +6,7 @@ public class EX_IF_LatchType {
 	boolean isBranchTaken=false;
 	boolean IF_enable;
 	public EX_IF_LatchType(){
-		IF_enable=true;
+		IF_enable=false;
 	}
 
 	public boolean isIF_enable() {
