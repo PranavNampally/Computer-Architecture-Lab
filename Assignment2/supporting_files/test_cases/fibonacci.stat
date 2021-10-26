@@ -1,0 +1,4 @@
+Number of instructions executed = 86
+Number of cycles taken = 230
+Number of Stalls = 126
+Number of Wrong Branches taken = 7
